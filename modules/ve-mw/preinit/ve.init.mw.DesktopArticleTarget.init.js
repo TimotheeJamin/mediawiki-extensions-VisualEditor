@@ -879,6 +879,9 @@
 		},
 
 		onEditTabClick: function ( mode, e ) {
+			if ( mw.user.isAnon() && !mw.config.get( 'wgIsProbablyEditable' ) ) {
+				return;
+			}
 			var section;
 			if ( !init.isUnmodifiedLeftClick( e ) ) {
 				return;
