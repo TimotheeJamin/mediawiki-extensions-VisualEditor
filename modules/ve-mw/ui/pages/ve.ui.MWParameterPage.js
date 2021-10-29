@@ -308,8 +308,7 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 			this.parameter.getSuggestedValues().map( function ( suggestedValue ) {
 				return { data: suggestedValue };
 			} );
-		this.rawValueInput = true;
-		return new OO.ui.ComboBoxInputWidget( valueInputConfig );
+		return new OO.ui.DropdownInputWidget( valueInputConfig );
 	} else if ( type !== 'line' || value.indexOf( '\n' ) !== -1 ) {
 		// If the type is line, but there are already newlines in the provided
 		// value, don't break the existing content by only providing a single-
