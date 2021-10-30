@@ -311,9 +311,16 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 			values.forEach ( (d, i) => valueInputConfig.options[i] = {data: d, label: labels[i]})
 		} else {
 			valueInputConfig.options =
-				this.parameter.getSuggestedValues().map( function ( suggestedValue ) {
+			values.map( function ( suggestedValue ) {
 					return { data: suggestedValue };
 				} );
+		}
+		if ( $.inArray(value, values) == -1 ) {
+			value = '';
+			this.parameter.setValue( value );
+		}
+		if ( value === '' || !this.parameter.isRequired() ) {
+			valueInputConfig.options.unshift( {data: '', label: ' ' } );
 		}
 		return new OO.ui.DropdownInputWidget( valueInputConfig );
 	} else if ( type !== 'line' || value.indexOf( '\n' ) !== -1 ) {
