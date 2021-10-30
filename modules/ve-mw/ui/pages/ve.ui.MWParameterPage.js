@@ -304,10 +304,17 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 		this.parameter.getSuggestedValues().length &&
 		this.isSuggestedValueType( type )
 	) {
-		valueInputConfig.options =
-			this.parameter.getSuggestedValues().map( function ( suggestedValue ) {
-				return { data: suggestedValue };
-			} );
+		values = this.parameter.getSuggestedValues();
+		labels = this.parameter.getSuggestedValueLabels();
+		if ( values.length == labels.length ) {
+			valueInputConfig.options = [];
+			values.forEach ( (d, i) => valueInputConfig.options[i] = {data: d, label: labels[i]})
+		} else {
+			valueInputConfig.options =
+				this.parameter.getSuggestedValues().map( function ( suggestedValue ) {
+					return { data: suggestedValue };
+				} );
+		}
 		return new OO.ui.DropdownInputWidget( valueInputConfig );
 	} else if ( type !== 'line' || value.indexOf( '\n' ) !== -1 ) {
 		// If the type is line, but there are already newlines in the provided

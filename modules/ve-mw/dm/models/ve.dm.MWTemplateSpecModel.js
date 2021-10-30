@@ -218,6 +218,15 @@ ve.dm.MWTemplateSpecModel.prototype.getParameterSuggestedValues = function ( nam
 };
 
 /**
+ * Get suggested value labels.
+ *
+ * @param {string} name Parameter name
+ * @return {string[]} Parameter suggested value labels
+ */
+ ve.dm.MWTemplateSpecModel.prototype.getParameterSuggestedValueLabels = function ( name ) {
+	return this.params[ name ].suggestedvaluelabels || [];
+};
+/**
  * Get a parameter value.
  *
  * @param {string} name Parameter name
