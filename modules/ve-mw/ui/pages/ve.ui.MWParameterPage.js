@@ -306,23 +306,42 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 	) {
 		values = this.parameter.getSuggestedValues();
 		labels = this.parameter.getSuggestedValueLabels();
+		// If labels are well defined, we add them next to each value
 		if ( values.length == labels.length ) {
+			this.rawValueInput = false;
 			valueInputConfig.options = [];
-			values.forEach ( (d, i) => valueInputConfig.options[i] = {data: d, label: labels[i]})
+			values.forEach ( (d, i) => valueInputConfig.options[i] = {data: d, label: d + ' (' + labels[i] + ')'})
 		} else {
+			this.rawValueInput = true; // Allows to switch between labels and raw wikitext
 			valueInputConfig.options =
 			values.map( function ( suggestedValue ) {
 					return { data: suggestedValue };
 				} );
 		}
-		if ( $.inArray(value, values) == -1 ) {
-			value = '';
-			this.parameter.setValue( value );
+		// If we force user to select a suggested value
+		if ( this.parameter.usesSuggestedValuesOnly() ) {
+			// If the previously defined value is not part of suggested values, we set it to empty
+			if ( $.inArray(value, values) == -1 ) {
+				value = '';
+				this.parameter.setValue( value );
+			}
+			// Add an empty value option when the parameter is empty or not required
+			if ( value === '' || !this.parameter.isRequired() ) {
+				valueInputConfig.options.unshift( {data: '', label: ' ' } );
+			}
+			return new OO.ui.DropdownInputWidget( valueInputConfig );
 		}
-		if ( value === '' || !this.parameter.isRequired() ) {
-			valueInputConfig.options.unshift( {data: '', label: ' ' } );
+		// If the user can type a different value
+		else {
+			this.rawValueInput = true; // Raw wikitext is already used when value is selected
+			// Filter values when typing
+			valueInputConfig.menu = {
+				filterFromInput: true,
+				filterMode: 'substring',
+				highlightOnFilter: true
+			};
+			return new OO.ui.ComboBoxInputWidget( valueInputConfig );
 		}
-		return new OO.ui.DropdownInputWidget( valueInputConfig );
 	} else if ( type !== 'line' || value.indexOf( '\n' ) !== -1 ) {
 		// If the type is line, but there are already newlines in the provided
 		// value, don't break the existing content by only providing a single-

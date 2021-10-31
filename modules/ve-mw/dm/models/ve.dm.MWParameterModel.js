@@ -133,6 +133,15 @@ ve.dm.MWParameterModel.prototype.getSuggestedValues = function () {
 };
 
 /**
+ * Check if only suggested values should be used.
+ *
+ * @return {boolean} Only suggested values should be used
+ */
+ ve.dm.MWParameterModel.prototype.usesSuggestedValuesOnly = function () {
+	return this.template.getSpec().doesParameterUseSuggestedValuesOnly( this.name );
+};
+
+/**
  * Get default parameter value.
  *
  * @return {string} Default parameter value

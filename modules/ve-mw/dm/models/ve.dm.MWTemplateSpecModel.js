@@ -226,6 +226,17 @@ ve.dm.MWTemplateSpecModel.prototype.getParameterSuggestedValues = function ( nam
  ve.dm.MWTemplateSpecModel.prototype.getParameterSuggestedValueLabels = function ( name ) {
 	return this.params[ name ].suggestedvaluelabels || [];
 };
+
+/**
+ * Check if only suggested values should be used.
+ *
+ * @param {string} name Parameter name
+ * @return {boolean} Only suggested values should be used
+ */
+ ve.dm.MWTemplateSpecModel.prototype.doesParameterUseSuggestedValuesOnly = function ( name ) {
+	return !!this.params[ name ].suggestedvaluesonly;
+};
+
 /**
  * Get a parameter value.
  *
