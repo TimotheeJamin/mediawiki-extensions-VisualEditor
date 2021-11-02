@@ -306,11 +306,11 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 	) {
 		values = this.parameter.getSuggestedValues();
 		labels = this.parameter.getSuggestedValueLabels();
-		// If labels are well defined, we add them next to each value
+		// If labels array is well defined, we add a label next to each value, except if the label contains spaces only (empty label)
 		if ( values.length == labels.length ) {
 			this.rawValueInput = false;
 			valueInputConfig.options = [];
-			values.forEach ( (d, i) => valueInputConfig.options[i] = {data: d, label: d + ' (' + labels[i] + ')'})
+			values.forEach ( (d, i) => valueInputConfig.options[i] = {data: d, label: labels[i].replace(/\s/g, '').length ? d + ' (' + labels[i] + ')' : d})
 		} else {
 			this.rawValueInput = true; // Allows to switch between labels and raw wikitext
 			valueInputConfig.options =
