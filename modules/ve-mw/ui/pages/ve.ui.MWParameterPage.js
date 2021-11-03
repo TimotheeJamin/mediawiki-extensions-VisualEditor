@@ -306,11 +306,19 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 	) {
 		values = this.parameter.getSuggestedValues();
 		labels = this.parameter.getSuggestedValueLabels();
-		// If labels array is well defined, we add a label next to each value, except if the label contains spaces only (empty label)
+		suggestedOnly = this.parameter.usesSuggestedValuesOnly();
+		// Add a label for each value if labels array is well defined
 		if ( values.length == labels.length ) {
 			this.rawValueInput = false;
 			valueInputConfig.options = [];
-			values.forEach ( (d, i) => valueInputConfig.options[i] = {data: d, label: labels[i].replace(/\s/g, '').length ? d + ' (' + labels[i] + ')' : d})
+			// If a label contains spaces only (= empty label), no label is displayed.
+			// For a classical dropdown menu, we display labels only. 
+			// The combobox displays a label in brackets next to each value.
+			values.forEach ( (d, i) => valueInputConfig.options[i] = {
+					data: d, 
+					label: labels[i].replace(/\s/g, '').length ?  
+						( suggestedOnly ? labels[i] : d + ' (' + labels[i] + ')' ) : d 
+			} );
 		} else {
 			this.rawValueInput = true; // Allows to switch between labels and raw wikitext
 			valueInputConfig.options =
@@ -319,7 +327,7 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 				} );
 		}
 		// If we force user to select a suggested value
-		if ( this.parameter.usesSuggestedValuesOnly() ) {
+		if ( suggestedOnly ) {
 			// If the previously defined value is not part of suggested values, we set it to empty
 			if ( $.inArray(value, values) == -1 ) {
 				value = '';
