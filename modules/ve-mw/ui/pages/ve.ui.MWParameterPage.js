@@ -246,15 +246,53 @@ ve.ui.MWParameterPage.prototype.createValueInput = function () {
 		this.parameter.getSuggestedValues().length &&
 		this.isSuggestedValueType( type )
 	) {
-		valueInputConfig.menu = { filterFromInput: true, highlightOnFilter: true };
-		valueInputConfig.options =
-			this.parameter.getSuggestedValues().filter( function ( suggestedValue ) {
-				// This wasn't validated for a while, existing templates can do anything here
-				return typeof suggestedValue === 'string';
-			} ).map( function ( suggestedValue ) {
-				return { data: suggestedValue, label: suggestedValue || '\xA0' };
+		values = this.parameter.getSuggestedValues().filter( function ( suggestedValue ) {
+			// This wasn't validated for a while, existing templates can do anything here
+			return typeof suggestedValue === 'string';
+		} );
+		labels = this.parameter.getSuggestedValueLabels();
+		suggestedOnly = this.parameter.usesSuggestedValuesOnly();
+		// Add a label for each value if labels array is well defined
+		if ( values.length == labels.length ) {
+			valueInputConfig.options = [];
+			// If a label contains spaces only (= empty label), no label is displayed.
+			// For a classical dropdown menu, we display labels only.
+			// The combobox displays a label in brackets next to each value.
+			values.forEach ( (d, i) => valueInputConfig.options[i] = {
+					data: d,
+					label: labels[i].replace(/\s/g, '').length ?
+						( suggestedOnly ? labels[i] : d + ' (' + labels[i] + ')' ) : d
 			} );
-		return new OO.ui.ComboBoxInputWidget( valueInputConfig );
+		} else {
+			valueInputConfig.options =
+				values.map( function ( suggestedValue ) {
+					return { data: suggestedValue, label: suggestedValue || '\xA0' };
+				} );
+		}
+		// If we force user to select a suggested value
+		if ( suggestedOnly ) {
+			// If the previously defined value is not part of suggested values, we set it to empty
+			if ( $.inArray(value, values) == -1 ) {
+				value = '';
+				this.parameter.setValue( value );
+			}
+			// Add an empty value option when the parameter is empty or not required
+			if ( value === '' || !this.parameter.isRequired() ) {
+				valueInputConfig.options.unshift( {data: '', label: ' ' } );
+			}
+			return new OO.ui.DropdownInputWidget( valueInputConfig );
+		}
+		// If the user can type a different value
+		else {
+			this.rawValueInput = true; // Raw wikitext is already used when value is selected
+			// Filter values when typing
+			valueInputConfig.menu = {
+				filterFromInput: true,
+				filterMode: 'substring',
+				highlightOnFilter: true
+			};
+			return new OO.ui.ComboBoxInputWidget( valueInputConfig );
+		}
 	} else if ( type !== 'line' || value.indexOf( '\n' ) !== -1 ) {
 		// If the type is line, but there are already newlines in the provided
 		// value, don't break the existing content by only providing a single-

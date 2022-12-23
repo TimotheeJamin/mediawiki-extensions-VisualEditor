@@ -125,6 +125,20 @@ ve.dm.MWParameterModel.prototype.getSuggestedValues = function () {
 };
 
 /**
+ * @return {string[]} Parameter suggested value labels
+ */
+ve.dm.MWParameterModel.prototype.getSuggestedValueLabels = function () {
+	return this.template.getSpec().getParameterSuggestedValueLabels( this.name );
+};
+
+/**
+ * @return {boolean} Only suggested values should be used
+ */
+ ve.dm.MWParameterModel.prototype.usesSuggestedValuesOnly = function () {
+	return this.template.getSpec().doesParameterUseSuggestedValuesOnly( this.name );
+};
+
+/**
  * @return {string}
  */
 ve.dm.MWParameterModel.prototype.getDefaultValue = function () {

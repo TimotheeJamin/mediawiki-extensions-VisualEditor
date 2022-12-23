@@ -288,6 +288,24 @@ ve.dm.MWTemplateSpecModel.prototype.getParameterSuggestedValues = function ( nam
 };
 
 /**
+ * @param {string} name Parameter name
+ * @return {string[]} Parameter suggested value labels
+ */
+ve.dm.MWTemplateSpecModel.prototype.getParameterSuggestedValueLabels = function ( name ) {
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return param && param.suggestedvaluelabels || [];
+};
+
+/**
+ * @param {string} name Parameter name
+ * @return {boolean} Only suggested values should be used
+ */
+ ve.dm.MWTemplateSpecModel.prototype.doesParameterUseSuggestedValuesOnly = function ( name ) {
+	var param = this.templateData.params[ this.getPrimaryParameterName( name ) ];
+	return !!( param && param.suggestedvaluesonly );
+};
+
+/**
  * The default value will be placed in the input field when the parameter is added. The user can
  * edit or even remove it.
  *
